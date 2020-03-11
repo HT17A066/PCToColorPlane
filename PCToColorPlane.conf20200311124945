@@ -38,7 +38,7 @@
 # conf.default.segmentationDistanceThreshold: 0.05
 # conf.default.segmentationRadiusMin: 0.01
 # conf.default.segmentationRadiusMax: 0.05
-# conf.default.planePointSizeMin: 100
+# conf.default.cylinderPointSizeMin: 100
 # conf.default.displayHistogram: 1
 # conf.default.histogramBinNumber: 16
 # conf.default.saturationMin: 127
@@ -48,7 +48,7 @@
 # conf.default.sameCylinderCenterDistanceLimit: 0.02
 # conf.default.sameCylinderRadiusDistanceLimit: 0.01
 # conf.default.sameCylinderHueDistanceLimit: 23
-# conf.default.planeAccumulationMin: 10
+# conf.default.cylinderAccumulationMin: 10
 # conf.default.coordinateTransformationFile: coordinateTransformation.txt
 # conf.default.calibrationOffsetX: 0.0
 # conf.default.calibrationOffsetY: 0.0
@@ -68,7 +68,7 @@
 # conf.mode0.segmentationDistanceThreshold: 0.05
 # conf.mode0.segmentationRadiusMin: 0.01
 # conf.mode0.segmentationRadiusMax: 0.05
-# conf.mode0.planePointSizeMin: 100
+# conf.mode0.cylinderPointSizeMin: 100
 # conf.mode0.displayHistogram: 1
 # conf.mode0.histogramBinNumber: 16
 # conf.mode0.saturationMin: 127
@@ -78,7 +78,7 @@
 # conf.mode0.sameCylinderCenterDistanceLimit: 0.02
 # conf.mode0.sameCylinderRadiusDistanceLimit: 0.01
 # conf.mode0.sameCylinderHueDistanceLimit: 23
-# conf.mode0.planeAccumulationMin: 10
+# conf.mode0.cylinderAccumulationMin: 10
 # conf.mode0.coordinateTransformationFile: coordinateTransformation.txt
 # conf.mode0.calibrationOffsetX: 0.0
 # conf.mode0.calibrationOffsetY: 0.0
@@ -98,7 +98,7 @@
 # conf.mode1.segmentationDistanceThreshold: 0.05
 # conf.mode1.segmentationRadiusMin: 0.01
 # conf.mode1.segmentationRadiusMax: 0.05
-# conf.mode1.planePointSizeMin: 100
+# conf.mode1.cylinderPointSizeMin: 100
 # conf.mode1.displayHistogram: 1
 # conf.mode1.histogramBinNumber: 16
 # conf.mode1.saturationMin: 127
@@ -108,7 +108,7 @@
 # conf.mode1.sameCylinderCenterDistanceLimit: 0.02
 # conf.mode1.sameCylinderRadiusDistanceLimit: 0.01
 # conf.mode1.sameCylinderHueDistanceLimit: 23
-# conf.mode1.planeAccumulationMin: 10
+# conf.mode1.cylinderAccumulationMin: 10
 # conf.mode1.coordinateTransformationFile: coordinateTransformation.txt
 # conf.mode1.calibrationOffsetX: 0.0
 # conf.mode1.calibrationOffsetY: 0.0
@@ -171,7 +171,7 @@
 # conf.__widget__.segmentationDistanceThreshold, text
 # conf.__widget__.segmentationRadiusMin, text
 # conf.__widget__.segmentationRadiusMax, text
-# conf.__widget__.planePointSizeMin, text
+# conf.__widget__.cylinderPointSizeMin, text
 # conf.__widget__.displayHistogram, text
 # conf.__widget__.histogramBinNumber, text
 # conf.__widget__.saturationMin, text
@@ -181,7 +181,7 @@
 # conf.__widget__.sameCylinderCenterDistanceLimit, text
 # conf.__widget__.sameCylinderRadiusDistanceLimit, text
 # conf.__widget__.sameCylinderHueDistanceLimit, text
-# conf.__widget__.planeAccumulationMin, text
+# conf.__widget__.cylinderAccumulationMin, text
 # conf.__widget__.coordinateTransformationFile, text
 # conf.__widget__.calibrationOffsetX, text
 # conf.__widget__.calibrationOffsetY, text
@@ -208,7 +208,7 @@
 # conf.__type__.segmentationDistanceThreshold: float
 # conf.__type__.segmentationRadiusMin: float
 # conf.__type__.segmentationRadiusMax: float
-# conf.__type__.planePointSizeMin: int
+# conf.__type__.cylinderPointSizeMin: int
 # conf.__type__.displayHistogram: int
 # conf.__type__.histogramBinNumber: int
 # conf.__type__.saturationMin: int
@@ -218,7 +218,7 @@
 # conf.__type__.sameCylinderCenterDistanceLimit: float
 # conf.__type__.sameCylinderRadiusDistanceLimit: float
 # conf.__type__.sameCylinderHueDistanceLimit: float
-# conf.__type__.planeAccumulationMin: int
+# conf.__type__.cylinderAccumulationMin: int
 # conf.__type__.coordinateTransformationFile: string
 # conf.__type__.calibrationOffsetX: float
 # conf.__type__.calibrationOffsetY: float

@@ -118,7 +118,7 @@ segmentationMaxIteration int                1000
 segmentationDistanceThreshold float              0.05             
 segmentationRadiusMin float              0.01             
 segmentationRadiusMax float              0.05             
-planePointSizeMin int                100              
+cylinderPointSizeMin int                100              
 displayHistogram int                1                
 histogramBinNumber int                16               
 saturationMin    int                127              
@@ -128,7 +128,7 @@ valueMax         int                255
 sameCylinderCenterDistanceLimit float              0.02             
 sameCylinderRadiusDistanceLimit float              0.01             
 sameCylinderHueDistanceLimit float              23               
-planeAccumulationMin int                10               
+cylinderAccumulationMin int                10               
 coordinateTransformationFile string             coordinateTransformation.txt 
 calibrationOffsetX float              0.0              
 calibrationOffsetY float              0.0              

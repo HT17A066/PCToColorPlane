@@ -1,14 +1,32 @@
 ﻿// -*- C++ -*-
 /*!
- * @file  PCToColorPlaneTest.h
+ * @file  PCToColorPlane.h
  * @brief Extract cylinders from point cloud with color
  * @date  $Date$
  *
  * $Id$
  */
 
-#ifndef PCTOCOLORPLANE_TEST__H
-#define PCTOCOLORPLANE_TEST_H
+#ifndef PCTOCOLORPLANE_H
+#define PCTOCOLORPLANE_H
+
+#include <cmath>
+#include <vector>
+#include <list>
+#include <pcl/point_cloud.h>
+#include <pcl/point_types.h>
+#include <pcl/visualization/pcl_visualizer.h>
+#include <pcl/visualization/point_cloud_handlers.h>
+#include <pcl/ModelCoefficients.h>
+#include <pcl/filters/extract_indices.h>
+#include <pcl/filters/passthrough.h>
+#include <pcl/features/normal_3d_omp.h>
+#include <pcl/sample_consensus/method_types.h>
+#include <pcl/sample_consensus/model_types.h>
+#include <pcl/segmentation/sac_segmentation.h>
+#include <pcl/filters/voxel_grid.h>
+
+#include <opencv2/opencv.hpp>
 
 #include <rtm/idl/BasicDataTypeSkel.h>
 #include <rtm/idl/ExtendedDataTypesSkel.h>
@@ -16,13 +34,13 @@
 
 // Service implementation headers
 // <rtc-template block="service_impl_h">
-#include "pointcloudSVC_impl.h"
-#include "BasicDataTypeSVC_impl.h"
 
 // </rtc-template>
 
 // Service Consumer stub headers
 // <rtc-template block="consumer_stub_h">
+#include "pointcloudStub.h"
+#include "BasicDataTypeStub.h"
 
 // </rtc-template>
 
@@ -40,11 +58,11 @@ using namespace PointCloudTypes;
 using namespace RTC;
 
 /*!
- * @class PCToColorPlaneTest
+ * @class PCToColorPlane
  * @brief Extract cylinders from point cloud with color
  *
  */
-class PCToColorPlaneTest
+class PCToColorPlane
   : public RTC::DataFlowComponentBase
 {
  public:
@@ -52,12 +70,12 @@ class PCToColorPlaneTest
    * @brief constructor
    * @param manager Maneger Object
    */
-  PCToColorPlaneTest(RTC::Manager* manager);
+  PCToColorPlane(RTC::Manager* manager);
 
   /*!
    * @brief destructor
    */
-  ~PCToColorPlaneTest();
+  ~PCToColorPlane();
 
   // <rtc-template block="public_attribute">
   
@@ -305,10 +323,10 @@ class PCToColorPlaneTest
   float m_segmentationRadiusMax;
   /*!
    * 
-   * - Name:  planePointSizeMin
+   * - Name:  cylinderPointSizeMin
    * - DefaultValue: 100
    */
-  int m_planePointSizeMin;
+  int m_cylinderPointSizeMin;
   /*!
    * 
    * - Name:  displayHistogram
@@ -365,10 +383,10 @@ class PCToColorPlaneTest
   float m_sameCylinderHueDistanceLimit;
   /*!
    * 
-   * - Name:  planeAccumulationMin
+   * - Name:  cylinderAccumulationMin
    * - DefaultValue: 10
    */
-  int m_planeAccumulationMin;
+  int m_cylinderAccumulationMin;
   /*!
    * 
    * - Name:  coordinateTransformationFile
@@ -398,20 +416,20 @@ class PCToColorPlaneTest
 
   // DataInPort declaration
   // <rtc-template block="inport_declare">
-  RTC::TimedDoubleSeq m_plane;
+  PointCloudTypes::PointCloud m_pc;
   /*!
    */
-  InPort<RTC::TimedDoubleSeq> m_planeIn;
+  InPort<PointCloudTypes::PointCloud> m_pcIn;
   
   // </rtc-template>
 
 
   // DataOutPort declaration
   // <rtc-template block="outport_declare">
-  PointCloudTypes::PointCloud m_pc;
+  RTC::TimedDoubleSeq m_plane;
   /*!
    */
-  OutPort<PointCloudTypes::PointCloud> m_pcOut;
+  OutPort<RTC::TimedDoubleSeq> m_planeOut;
   
   // </rtc-template>
 
@@ -438,13 +456,32 @@ class PCToColorPlaneTest
   // <rtc-template block="private_operation">
   
   // </rtc-template>
+   boost::shared_ptr<pcl::visualization::PCLVisualizer> m_viewer;
+   bool m_first;
+   Eigen::Affine3f m_coordinateTransformation;
 
+   struct Cylinder {
+     Eigen::Vector3f center;
+     float radius;
+     float hue;
+     Cylinder() { center = Eigen::Vector3f::Zero(); radius = 0; hue = 0; }
+     Cylinder(Eigen::Vector3f c, float r, float h) { center = c; radius = r; hue = h; }
+   };
+   struct CylinderCandidate {
+     Cylinder cylinder;
+     int count;
+     bool updated;
+   };
+   std::list<CylinderCandidate> m_cylinderCandidates;
+   void selectCylinders(const std::vector<Cylinder> &cylinders, RTC::TimedDoubleSeq &seq);
+
+   bool m_rtcError;  //OpenRTM-aist-1.2.0のバグ回避
 };
 
 
 extern "C"
 {
-  DLL_EXPORT void PCToColorPlaneTestInit(RTC::Manager* manager);
+  DLL_EXPORT void PCToColorPlaneInit(RTC::Manager* manager);
 };
 
-#endif // PCTOCOLORPLANE_TEST_H
+#endif // PCTOCOLORPLANE_H

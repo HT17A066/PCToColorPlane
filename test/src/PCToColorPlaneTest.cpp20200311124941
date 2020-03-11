@@ -15,7 +15,7 @@ static const char* pctocolorplane_spec[] =
   {
     "implementation_id", "PCToColorPlaneTest",
     "type_name",         "PCToColorPlaneTest",
-    "description",       "Extract planes from point cloud with color",
+    "description",       "Extract cylinders from point cloud with color",
     "version",           "1.0.0",
     "vendor",            "MasutaniLab",
     "category",          "PointCloud",
@@ -37,7 +37,7 @@ static const char* pctocolorplane_spec[] =
     "conf.default.segmentationDistanceThreshold", "0.05",
     "conf.default.segmentationRadiusMin", "0.01",
     "conf.default.segmentationRadiusMax", "0.05",
-    "conf.default.planePointSizeMin", "100",
+    "conf.default.cylinderPointSizeMin", "100",
     "conf.default.displayHistogram", "1",
     "conf.default.histogramBinNumber", "16",
     "conf.default.saturationMin", "127",
@@ -47,7 +47,7 @@ static const char* pctocolorplane_spec[] =
     "conf.default.sameCylinderCenterDistanceLimit", "0.02",
     "conf.default.sameCylinderRadiusDistanceLimit", "0.01",
     "conf.default.sameCylinderHueDistanceLimit", "23",
-    "conf.default.planeAccumulationMin", "10",
+    "conf.default.cylinderAccumulationMin", "10",
     "conf.default.coordinateTransformationFile", "coordinateTransformation.txt",
     "conf.default.calibrationOffsetX", "0.0",
     "conf.default.calibrationOffsetY", "0.0",
@@ -66,7 +66,7 @@ static const char* pctocolorplane_spec[] =
     "conf.__widget__.segmentationDistanceThreshold", "text",
     "conf.__widget__.segmentationRadiusMin", "text",
     "conf.__widget__.segmentationRadiusMax", "text",
-    "conf.__widget__.planePointSizeMin", "text",
+    "conf.__widget__.cylinderPointSizeMin", "text",
     "conf.__widget__.displayHistogram", "text",
     "conf.__widget__.histogramBinNumber", "text",
     "conf.__widget__.saturationMin", "text",
@@ -76,7 +76,7 @@ static const char* pctocolorplane_spec[] =
     "conf.__widget__.sameCylinderCenterDistanceLimit", "text",
     "conf.__widget__.sameCylinderRadiusDistanceLimit", "text",
     "conf.__widget__.sameCylinderHueDistanceLimit", "text",
-    "conf.__widget__.planeAccumulationMin", "text",
+    "conf.__widget__.cylinderAccumulationMin", "text",
     "conf.__widget__.coordinateTransformationFile", "text",
     "conf.__widget__.calibrationOffsetX", "text",
     "conf.__widget__.calibrationOffsetY", "text",
@@ -95,7 +95,7 @@ static const char* pctocolorplane_spec[] =
     "conf.__type__.segmentationDistanceThreshold", "float",
     "conf.__type__.segmentationRadiusMin", "float",
     "conf.__type__.segmentationRadiusMax", "float",
-    "conf.__type__.planePointSizeMin", "int",
+    "conf.__type__.cylinderPointSizeMin", "int",
     "conf.__type__.displayHistogram", "int",
     "conf.__type__.histogramBinNumber", "int",
     "conf.__type__.saturationMin", "int",
@@ -105,7 +105,7 @@ static const char* pctocolorplane_spec[] =
     "conf.__type__.sameCylinderCenterDistanceLimit", "float",
     "conf.__type__.sameCylinderRadiusDistanceLimit", "float",
     "conf.__type__.sameCylinderHueDistanceLimit", "float",
-    "conf.__type__.planeAccumulationMin", "int",
+    "conf.__type__.cylinderAccumulationMin", "int",
     "conf.__type__.coordinateTransformationFile", "string",
     "conf.__type__.calibrationOffsetX", "float",
     "conf.__type__.calibrationOffsetY", "float",
@@ -170,7 +170,7 @@ RTC::ReturnCode_t PCToColorPlaneTest::onInitialize()
   bindParameter("segmentationDistanceThreshold", m_segmentationDistanceThreshold, "0.05");
   bindParameter("segmentationRadiusMin", m_segmentationRadiusMin, "0.01");
   bindParameter("segmentationRadiusMax", m_segmentationRadiusMax, "0.05");
-  bindParameter("planePointSizeMin", m_planePointSizeMin, "100");
+  bindParameter("cylinderPointSizeMin", m_cylinderPointSizeMin, "100");
   bindParameter("displayHistogram", m_displayHistogram, "1");
   bindParameter("histogramBinNumber", m_histogramBinNumber, "16");
   bindParameter("saturationMin", m_saturationMin, "127");
@@ -180,7 +180,7 @@ RTC::ReturnCode_t PCToColorPlaneTest::onInitialize()
   bindParameter("sameCylinderCenterDistanceLimit", m_sameCylinderCenterDistanceLimit, "0.02");
   bindParameter("sameCylinderRadiusDistanceLimit", m_sameCylinderRadiusDistanceLimit, "0.01");
   bindParameter("sameCylinderHueDistanceLimit", m_sameCylinderHueDistanceLimit, "23");
-  bindParameter("planeAccumulationMin", m_planeAccumulationMin, "10");
+  bindParameter("cylinderAccumulationMin", m_cylinderAccumulationMin, "10");
   bindParameter("coordinateTransformationFile", m_coordinateTransformationFile, "coordinateTransformation.txt");
   bindParameter("calibrationOffsetX", m_calibrationOffsetX, "0.0");
   bindParameter("calibrationOffsetY", m_calibrationOffsetY, "0.0");

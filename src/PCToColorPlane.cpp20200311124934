@@ -1,7 +1,7 @@
 ﻿// -*- C++ -*-
 /*!
  * @file  PCToColorPlane.cpp
- * @brief Extract planes from point cloud with color
+ * @brief Extract cylinders from point cloud with color
  * @date $Date$
  *
  * $Id$
@@ -26,7 +26,7 @@ void setPointCloud(boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer,
 void setCube(boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer,
   const Eigen::Vector3f &center, const Eigen::Quaternionf &rotation, float size,
   string name, int r, int g, int b);
-void revisePlane(pcl::PointCloud<PointType>::Ptr cloud, pcl::ModelCoefficients::Ptr coefficients,
+void reviseCylinder(pcl::PointCloud<PointType>::Ptr cloud, pcl::ModelCoefficients::Ptr coefficients,
   Eigen::Vector3f &center, Eigen::Quaternionf &rotation, float &radius);
 float calcHue(pcl::PointCloud<PointType>::ConstPtr cloud, int hbins, int smin, int smax, int vmin, int vmax, string title = "");
 void hsv2rgb(int h, int s, int v, int &r, int &g, int &b);
@@ -38,7 +38,7 @@ static const char* pctocolorplane_spec[] =
   {
     "implementation_id", "PCToColorPlane",
     "type_name",         "PCToColorPlane",
-    "description",       "Extract planes from point cloud with color",
+    "description",       "Extract cylinders from point cloud with color",
     "version",           "1.0.0",
     "vendor",            "MasutaniLab",
     "category",          "PointCloud",
@@ -60,17 +60,17 @@ static const char* pctocolorplane_spec[] =
     "conf.default.segmentationDistanceThreshold", "0.05",
     "conf.default.segmentationRadiusMin", "0.01",
     "conf.default.segmentationRadiusMax", "0.05",
-    "conf.default.planePointSizeMin", "100",
+    "conf.default.cylinderPointSizeMin", "100",
     "conf.default.displayHistogram", "1",
     "conf.default.histogramBinNumber", "16",
     "conf.default.saturationMin", "127",
     "conf.default.saturationMax", "255",
     "conf.default.valueMin", "0",
     "conf.default.valueMax", "255",
-    "conf.default.samePlaneCenterDistanceLimit", "0.02",
-    "conf.default.samePlaneRadiusDistanceLimit", "0.01",
-    "conf.default.samePlaneHueDistanceLimit", "23",
-    "conf.default.planeAccumulationMin", "10",
+    "conf.default.sameCylinderCenterDistanceLimit", "0.02",
+    "conf.default.sameCylinderRadiusDistanceLimit", "0.01",
+    "conf.default.sameCylinderHueDistanceLimit", "23",
+    "conf.default.cylinderAccumulationMin", "10",
     "conf.default.coordinateTransformationFile", "coordinateTransformation.txt",
     "conf.default.calibrationOffsetX", "0.0",
     "conf.default.calibrationOffsetY", "0.0",
@@ -89,17 +89,17 @@ static const char* pctocolorplane_spec[] =
     "conf.__widget__.segmentationDistanceThreshold", "text",
     "conf.__widget__.segmentationRadiusMin", "text",
     "conf.__widget__.segmentationRadiusMax", "text",
-    "conf.__widget__.planePointSizeMin", "text",
+    "conf.__widget__.cylinderPointSizeMin", "text",
     "conf.__widget__.displayHistogram", "text",
     "conf.__widget__.histogramBinNumber", "text",
     "conf.__widget__.saturationMin", "text",
     "conf.__widget__.saturationMax", "text",
     "conf.__widget__.valueMin", "text",
     "conf.__widget__.valueMax", "text",
-    "conf.__widget__.samePlaneCenterDistanceLimit", "text",
-    "conf.__widget__.samePlaneRadiusDistanceLimit", "text",
-    "conf.__widget__.samePlaneHueDistanceLimit", "text",
-    "conf.__widget__.planeAccumulationMin", "text",
+    "conf.__widget__.sameCylinderCenterDistanceLimit", "text",
+    "conf.__widget__.sameCylinderRadiusDistanceLimit", "text",
+    "conf.__widget__.sameCylinderHueDistanceLimit", "text",
+    "conf.__widget__.cylinderAccumulationMin", "text",
     "conf.__widget__.coordinateTransformationFile", "text",
     "conf.__widget__.calibrationOffsetX", "text",
     "conf.__widget__.calibrationOffsetY", "text",
@@ -118,17 +118,17 @@ static const char* pctocolorplane_spec[] =
     "conf.__type__.segmentationDistanceThreshold", "float",
     "conf.__type__.segmentationRadiusMin", "float",
     "conf.__type__.segmentationRadiusMax", "float",
-    "conf.__type__.planePointSizeMin", "int",
+    "conf.__type__.cylinderPointSizeMin", "int",
     "conf.__type__.displayHistogram", "int",
     "conf.__type__.histogramBinNumber", "int",
     "conf.__type__.saturationMin", "int",
     "conf.__type__.saturationMax", "int",
     "conf.__type__.valueMin", "int",
     "conf.__type__.valueMax", "int",
-    "conf.__type__.samePlaneCenterDistanceLimit", "float",
-    "conf.__type__.samePlaneRadiusDistanceLimit", "float",
-    "conf.__type__.samePlaneHueDistanceLimit", "float",
-    "conf.__type__.planeAccumulationMin", "int",
+    "conf.__type__.sameCylinderCenterDistanceLimit", "float",
+    "conf.__type__.sameCylinderRadiusDistanceLimit", "float",
+    "conf.__type__.sameCylinderHueDistanceLimit", "float",
+    "conf.__type__.cylinderAccumulationMin", "int",
     "conf.__type__.coordinateTransformationFile", "string",
     "conf.__type__.calibrationOffsetX", "float",
     "conf.__type__.calibrationOffsetY", "float",
@@ -194,17 +194,17 @@ RTC::ReturnCode_t PCToColorPlane::onInitialize()
   bindParameter("segmentationDistanceThreshold", m_segmentationDistanceThreshold, "0.05");
   bindParameter("segmentationRadiusMin", m_segmentationRadiusMin, "0.01");
   bindParameter("segmentationRadiusMax", m_segmentationRadiusMax, "0.05");
-  bindParameter("planePointSizeMin", m_planePointSizeMin, "100");
+  bindParameter("cylinderPointSizeMin", m_cylinderPointSizeMin, "100");
   bindParameter("displayHistogram", m_displayHistogram, "1");
   bindParameter("histogramBinNumber", m_histogramBinNumber, "16");
   bindParameter("saturationMin", m_saturationMin, "127");
   bindParameter("saturationMax", m_saturationMax, "255");
   bindParameter("valueMin", m_valueMin, "0");
   bindParameter("valueMax", m_valueMax, "255");
-  bindParameter("samePlaneCenterDistanceLimit", m_samePlaneCenterDistanceLimit, "0.02");
-  bindParameter("samePlaneRadiusDistanceLimit", m_samePlaneRadiusDistanceLimit, "0.01");
-  bindParameter("samePlaneHueDistanceLimit", m_samePlaneHueDistanceLimit, "23");
-  bindParameter("planeAccumulationMin", m_planeAccumulationMin, "10");
+  bindParameter("sameCylinderCenterDistanceLimit", m_sameCylinderCenterDistanceLimit, "0.02");
+  bindParameter("sameCylinderRadiusDistanceLimit", m_sameCylinderRadiusDistanceLimit, "0.01");
+  bindParameter("sameCylinderHueDistanceLimit", m_sameCylinderHueDistanceLimit, "23");
+  bindParameter("cylinderAccumulationMin", m_cylinderAccumulationMin, "10");
   bindParameter("coordinateTransformationFile", m_coordinateTransformationFile, "coordinateTransformation.txt");
   bindParameter("calibrationOffsetX", m_calibrationOffsetX, "0.0");
   bindParameter("calibrationOffsetY", m_calibrationOffsetY, "0.0");
@@ -454,7 +454,7 @@ RTC::ReturnCode_t PCToColorPlane::onExecute(RTC::UniqueId ec_id)
     m_plane.data.length(0);
     bool found = false;
 
-    vector<Plane> planes;
+    vector<Cylinder> cylinders;
 
     //★平面の推定を繰り返す★
     for (int i = 0; i < m_findingIterationLimit; i++) {
@@ -488,7 +488,7 @@ RTC::ReturnCode_t PCToColorPlane::onExecute(RTC::UniqueId ec_id)
       //cout << "cloudPlane->points.size(): " << cloudPlane->points.size() << endl;
 
       //点の数が少なければ処理を終了する．
-      if (cloudPlane->points.size() < m_planePointSizeMin) break;
+      if (cloudPlane->points.size() < m_cylinderPointSizeMin) break;
 
       found = true;
 
@@ -519,7 +519,7 @@ RTC::ReturnCode_t PCToColorPlane::onExecute(RTC::UniqueId ec_id)
       Eigen::Vector3f center;
       Eigen::Quaternionf rotation;
       float radius;
-      revisePlane(cloudPlane, coefficientsPlane, center, rotation, radius);
+      reviseCylinder(cloudPlane, coefficientsPlane, center, rotation, radius);
 
       //円柱の位置を表す立方体を表示
 #if 1
@@ -536,8 +536,8 @@ RTC::ReturnCode_t PCToColorPlane::onExecute(RTC::UniqueId ec_id)
       extract_normals.filter(*cloud_normals2);
 
       //結果
-      Plane c(center, radius, hue);
-      planes.push_back(c);
+      Cylinder c(center, radius, hue);
+      cylinders.push_back(c);
       RTC_INFO(("before i: %d, c: (%6.3f, %6.3f, %6.3f), r: %6.3f, h: %3.0f",
         i, center.x(), center.y(), center.z(), radius, hue));
     }
@@ -545,7 +545,7 @@ RTC::ReturnCode_t PCToColorPlane::onExecute(RTC::UniqueId ec_id)
     if (!found) {
       RTC_INFO(("not found"));
     }
-    selectPlanes(planes, m_plane);
+    selectCylinders(cylinders, m_plane);
     for (size_t i = 0; i < m_plane.data.length() / 5; i++) {
       RTC_INFO(("after  i: %d, c: (%6.3f, %6.3f, %6.3f), r: %6.3f, h: %3.0f",
         i, m_plane.data[5 * i + 0], m_plane.data[5 * i + 1], m_plane.data[5 * i + 2],
@@ -598,24 +598,24 @@ RTC::ReturnCode_t PCToColorPlane::onRateChanged(RTC::UniqueId ec_id)
 */
 
 //機能：点群から得られた円柱情報を蓄え、妥当なものだけ選択し、平均し、座標変換し、TimedDoubleSeqの形式にする。
-//引数： planes 円柱情報（入力）、seq 選択後の円柱情報（出力）
+//引数： cylinders 円柱情報（入力）、seq 選択後の円柱情報（出力）
 //戻り値： なし
-void PCToColorPlane::selectPlanes(const std::vector<Plane> &planes, RTC::TimedDoubleSeq &seq)
+void PCToColorPlane::selectCylinders(const std::vector<Cylinder> &cylinders, RTC::TimedDoubleSeq &seq)
 {
 #if 1
   //全ての候補の更新をfalseに
-  list<PlaneCandidate>::iterator j;
-  for (j = m_planeCandidates.begin(); j != m_planeCandidates.end(); ++j) {
+  list<CylinderCandidate>::iterator j;
+  for (j = m_cylinderCandidates.begin(); j != m_cylinderCandidates.end(); ++j) {
     j->updated = false;
   }
   //あらたな円柱情報を順番に処理
-  vector<Plane>::const_iterator i;
-  for (i = planes.begin(); i != planes.end(); ++i) {
+  vector<Cylinder>::const_iterator i;
+  for (i = cylinders.begin(); i != cylinders.end(); ++i) {
     //候補の中から1番近い円柱を求める
     float dmin = FLT_MAX;
-    list<PlaneCandidate>::iterator jmin;
-    for (j = m_planeCandidates.begin(); j != m_planeCandidates.end(); ++j) {
-      float d = (i->center - j->plane.center).norm();
+    list<CylinderCandidate>::iterator jmin;
+    for (j = m_cylinderCandidates.begin(); j != m_cylinderCandidates.end(); ++j) {
+      float d = (i->center - j->cylinder.center).norm();
       if (d < dmin) {
         dmin = d;
         jmin = j;
@@ -623,66 +623,66 @@ void PCToColorPlane::selectPlanes(const std::vector<Plane> &planes, RTC::TimedDo
     }
 #if  0
     if (dmin != FLT_MAX) {
-      print(jmin->plane.center);
+      print(jmin->cylinder.center);
       print(dmin);
-      print(abs(i->radius - jmin->plane.radius));
-      print(abs(i->hue - jmin->plane.hue));
+      print(abs(i->radius - jmin->cylinder.radius));
+      print(abs(i->hue - jmin->cylinder.hue));
     }
 #endif
     //1番近い候補の円柱との距離が小さく、かつ、半径が近く、かつ、色相が近ければ、1番近い候補を更新する
     if (dmin != FLT_MAX
-      && dmin < m_samePlaneCenterDistanceLimit
-      && abs(i->radius - jmin->plane.radius) < m_samePlaneRadiusDistanceLimit
-      && abs(i->hue - jmin->plane.hue) < m_samePlaneHueDistanceLimit) {
+      && dmin < m_sameCylinderCenterDistanceLimit
+      && abs(i->radius - jmin->cylinder.radius) < m_sameCylinderRadiusDistanceLimit
+      && abs(i->hue - jmin->cylinder.hue) < m_sameCylinderHueDistanceLimit) {
       //蓄積されたものと平均する
-      jmin->plane.center = ((jmin->plane.center)*(jmin->count) + i->center) / (jmin->count + 1);
-      jmin->plane.radius = ((jmin->plane.radius)*(jmin->count) + i->radius) / (jmin->count + 1);
-      jmin->plane.hue = ((jmin->plane.hue)*(jmin->count) + i->hue) / (jmin->count + 1);
+      jmin->cylinder.center = ((jmin->cylinder.center)*(jmin->count) + i->center) / (jmin->count + 1);
+      jmin->cylinder.radius = ((jmin->cylinder.radius)*(jmin->count) + i->radius) / (jmin->count + 1);
+      jmin->cylinder.hue = ((jmin->cylinder.hue)*(jmin->count) + i->hue) / (jmin->count + 1);
       jmin->count++;
       jmin->updated = true;
     } else {
       //そうでなければ、候補に新たに追加する
-      PlaneCandidate c;
-      c.plane = *i;
+      CylinderCandidate c;
+      c.cylinder = *i;
       c.count = 1;
       c.updated = true;
-      m_planeCandidates.push_back(c);
+      m_cylinderCandidates.push_back(c);
     }
   }
   //更新されなかったものは削除
-  for (j = m_planeCandidates.begin(); j != m_planeCandidates.end();) { //要素削除のためforの更新処理はあえて書いていない
+  for (j = m_cylinderCandidates.begin(); j != m_cylinderCandidates.end();) { //要素削除のためforの更新処理はあえて書いていない
     if (j->updated) {
       ++j;
     } else {
-      j = m_planeCandidates.erase(j);
+      j = m_cylinderCandidates.erase(j);
     }
   }
   //一定回数以上蓄積した物を座標変換し出力へコピー
   int k = 0;
   seq.data.length(0);
-  for (j = m_planeCandidates.begin(); j != m_planeCandidates.end(); ++j) {
-    if (j->count >= m_planeAccumulationMin) {
+  for (j = m_cylinderCandidates.begin(); j != m_cylinderCandidates.end(); ++j) {
+    if (j->count >= m_cylinderAccumulationMin) {
       seq.data.length(5 * (k + 1));
-      Eigen::Vector3f center = m_coordinateTransformation * j->plane.center;
+      Eigen::Vector3f center = m_coordinateTransformation * j->cylinder.center;
       seq.data[5 * k + 0] = center.x();
       seq.data[5 * k + 1] = center.y();
       seq.data[5 * k + 2] = center.z();
-      seq.data[5 * k + 3] = j->plane.radius;
-      seq.data[5 * k + 4] = j->plane.hue;
+      seq.data[5 * k + 3] = j->cylinder.radius;
+      seq.data[5 * k + 4] = j->cylinder.hue;
       k++;
     }
   }
 #else
   //確認のため従来の処理を実装
-  size_t s = planes.size();
+  size_t s = cylinders.size();
   for (size_t i = 0; i < s; i++) {
     seq.data.length(5 * (i + 1));
-    Eigen::Vector3f center = m_coordinateTransformation * planes[i].center;
+    Eigen::Vector3f center = m_coordinateTransformation * cylinders[i].center;
     seq.data[5 * i + 0] = center.x();
     seq.data[5 * i + 1] = center.y();
     seq.data[5 * i + 2] = center.z();
-    seq.data[5 * i + 3] = planes[i].radius;
-    seq.data[5 * i + 4] = planes[i].hue;
+    seq.data[5 * i + 3] = cylinders[i].radius;
+    seq.data[5 * i + 4] = cylinders[i].hue;
   }
 #endif
 }
@@ -719,7 +719,7 @@ void setCube(boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer,
 //機能：
 //引数：
 //戻り値： なし
-void revisePlane(pcl::PointCloud<PointType>::Ptr cloud, pcl::ModelCoefficients::Ptr coefficients,
+void reviseCylinder(pcl::PointCloud<PointType>::Ptr cloud, pcl::ModelCoefficients::Ptr coefficients,
   Eigen::Vector3f &center, Eigen::Quaternionf &rotation, float &radius)
 {
   Eigen::Vector4f centroid4f;

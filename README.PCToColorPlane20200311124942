@@ -19,7 +19,7 @@
 ======================================================================
 # <rtc-template block="module">
 Module Name: PCToColorPlane
-Description: Extract planes from point cloud with color
+Description: Extract cylinders from point cloud with color
 Version:     1.0.0
 Vendor:      MasutaniLab
 Category:    PointCloud
@@ -221,7 +221,7 @@ Lang Type:
 		Range:           
 		Constraint:      
 
-		Name:             planePointSizeMin
+		Name:             cylinderPointSizeMin
 		Description:     
 		Type:            int
 		DefaultValue:     100
@@ -301,7 +301,7 @@ Lang Type:
 		Range:           
 		Constraint:      
 
-		Name:             planeAccumulationMin
+		Name:             cylinderAccumulationMin
 		Description:     
 		Type:            int
 		DefaultValue:     10

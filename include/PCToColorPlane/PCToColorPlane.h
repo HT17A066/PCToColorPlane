@@ -1,7 +1,7 @@
 ﻿// -*- C++ -*-
 /*!
  * @file  PCToColorPlane.h
- * @brief Extract cylinders from point cloud with color
+ * @brief Extract planes from point cloud with color
  * @date  $Date$
  *
  * $Id$
@@ -59,7 +59,7 @@ using namespace RTC;
 
 /*!
  * @class PCToColorPlane
- * @brief Extract cylinders from point cloud with color
+ * @brief Extract planes from point cloud with color
  *
  */
 class PCToColorPlane
@@ -323,10 +323,10 @@ class PCToColorPlane
   float m_segmentationRadiusMax;
   /*!
    * 
-   * - Name:  cylinderPointSizeMin
+   * - Name:  planePointSizeMin
    * - DefaultValue: 100
    */
-  int m_cylinderPointSizeMin;
+  int m_planePointSizeMin;
   /*!
    * 
    * - Name:  displayHistogram
@@ -365,28 +365,28 @@ class PCToColorPlane
   int m_valueMax;
   /*!
    * 
-   * - Name:  sameCylinderCenterDistanceLimit
+   * - Name:  samePlaneCenterDistanceLimit
    * - DefaultValue: 0.02
    */
-  float m_sameCylinderCenterDistanceLimit;
+  float m_samePlaneCenterDistanceLimit;
   /*!
    * 
-   * - Name:  sameCylinderRadiusDistanceLimit
+   * - Name:  samePlaneRadiusDistanceLimit
    * - DefaultValue: 0.01
    */
-  float m_sameCylinderRadiusDistanceLimit;
+  float m_samePlaneRadiusDistanceLimit;
   /*!
    * 
-   * - Name:  sameCylinderHueDistanceLimit
+   * - Name:  samePlaneHueDistanceLimit
    * - DefaultValue: 23
    */
-  float m_sameCylinderHueDistanceLimit;
+  float m_samePlaneHueDistanceLimit;
   /*!
    * 
-   * - Name:  cylinderAccumulationMin
+   * - Name:  planeAccumulationMin
    * - DefaultValue: 10
    */
-  int m_cylinderAccumulationMin;
+  int m_planeAccumulationMin;
   /*!
    * 
    * - Name:  coordinateTransformationFile
@@ -460,20 +460,20 @@ class PCToColorPlane
    bool m_first;
    Eigen::Affine3f m_coordinateTransformation;
 
-   struct Cylinder {
+   struct Plane {
      Eigen::Vector3f center;
      float radius;
      float hue;
-     Cylinder() { center = Eigen::Vector3f::Zero(); radius = 0; hue = 0; }
-     Cylinder(Eigen::Vector3f c, float r, float h) { center = c; radius = r; hue = h; }
+     Plane() { center = Eigen::Vector3f::Zero(); radius = 0; hue = 0; }
+     Plane(Eigen::Vector3f c, float r, float h) { center = c; radius = r; hue = h; }
    };
-   struct CylinderCandidate {
-     Cylinder cylinder;
+   struct PlaneCandidate {
+     Plane plane;
      int count;
      bool updated;
    };
-   std::list<CylinderCandidate> m_cylinderCandidates;
-   void selectCylinders(const std::vector<Cylinder> &cylinders, RTC::TimedDoubleSeq &seq);
+   std::list<PlaneCandidate> m_planeCandidates;
+   void selectPlanes(const std::vector<Plane> &planes, RTC::TimedDoubleSeq &seq);
 
    bool m_rtcError;  //OpenRTM-aist-1.2.0のバグ回避
 };
