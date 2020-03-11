@@ -1,0 +1,54 @@
+# PCToColorPlane CMake config file
+#
+# This file sets the following variables:
+# PCToColorPlane_FOUND - Always TRUE.
+# PCToColorPlane_INCLUDE_DIRS - Directories containing the PCToColorPlane include files.
+# PCToColorPlane_IDL_DIRS - Directories containing the PCToColorPlane IDL files.
+# PCToColorPlane_LIBRARIES - Libraries needed to use PCToColorPlane.
+# PCToColorPlane_DEFINITIONS - Compiler flags for PCToColorPlane.
+# PCToColorPlane_VERSION - The version of PCToColorPlane found.
+# PCToColorPlane_VERSION_MAJOR - The major version of PCToColorPlane found.
+# PCToColorPlane_VERSION_MINOR - The minor version of PCToColorPlane found.
+# PCToColorPlane_VERSION_REVISION - The revision version of PCToColorPlane found.
+# PCToColorPlane_VERSION_CANDIDATE - The candidate version of PCToColorPlane found.
+
+message(STATUS "Found PCToColorPlane-@PROJECT_VERSION@")
+set(PCToColorPlane_FOUND TRUE)
+
+find_package(<dependency> REQUIRED)
+
+#set(PCToColorPlane_INCLUDE_DIRS
+#    "@CMAKE_INSTALL_PREFIX@/include/@PROJECT_NAME_LOWER@-@PROJECT_VERSION_MAJOR@"
+#    ${<dependency>_INCLUDE_DIRS}
+#    )
+#
+#set(PCToColorPlane_IDL_DIRS
+#    "@CMAKE_INSTALL_PREFIX@/include/@PROJECT_NAME_LOWER@-@PROJECT_VERSION_MAJOR@/idl")
+set(PCToColorPlane_INCLUDE_DIRS
+    "@CMAKE_INSTALL_PREFIX@/include/@CPACK_PACKAGE_FILE_NAME@"
+    ${<dependency>_INCLUDE_DIRS}
+    )
+set(PCToColorPlane_IDL_DIRS
+    "@CMAKE_INSTALL_PREFIX@/include/@CPACK_PACKAGE_FILE_NAME@/idl")
+
+
+if(WIN32)
+    set(PCToColorPlane_LIBRARIES
+        "@CMAKE_INSTALL_PREFIX@/@LIB_INSTALL_DIR@/@CMAKE_SHARED_LIBRARY_PREFIX@@PROJECT_NAME_LOWER@@CMAKE_STATIC_LIBRARY_SUFFIX@"
+        ${<dependency>_LIBRARIES}
+        )
+else(WIN32)
+    set(PCToColorPlane_LIBRARIES
+        "@CMAKE_INSTALL_PREFIX@/@LIB_INSTALL_DIR@/@CMAKE_SHARED_LIBRARY_PREFIX@@PROJECT_NAME_LOWER@@CMAKE_SHARED_LIBRARY_SUFFIX@"
+        ${<dependency>_LIBRARIES}
+        )
+endif(WIN32)
+
+set(PCToColorPlane_DEFINITIONS ${<dependency>_DEFINITIONS})
+
+set(PCToColorPlane_VERSION @PROJECT_VERSION@)
+set(PCToColorPlane_VERSION_MAJOR @PROJECT_VERSION_MAJOR@)
+set(PCToColorPlane_VERSION_MINOR @PROJECT_VERSION_MINOR@)
+set(PCToColorPlane_VERSION_REVISION @PROJECT_VERSION_REVISION@)
+set(PCToColorPlane_VERSION_CANDIDATE @PROJECT_VERSION_CANDIDATE@)
+
