@@ -463,9 +463,8 @@ class PCToColorPlane
    struct Plane {
      Eigen::Vector3f center;
      float radius;
-     float hue;
-     Plane() { center = Eigen::Vector3f::Zero(); radius = 0; hue = 0; }
-     Plane(Eigen::Vector3f c, float r, float h) { center = c; radius = r; hue = h; }
+     Plane() { center = Eigen::Vector3f::Zero(); radius = 0; }
+     Plane(Eigen::Vector3f c, float r) { center = c; radius = r; }
    };
    struct PlaneCandidate {
      Plane plane;
