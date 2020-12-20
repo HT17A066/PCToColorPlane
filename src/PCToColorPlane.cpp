@@ -419,9 +419,6 @@ RTC::ReturnCode_t PCToColorPlane::onExecute(RTC::UniqueId ec_id)
         vector<Plane> planes;
 
 
-        //★平面の推定を繰り返す★
-    for (int i = 0; i < m_findingIterationLimit; i++) {
-
             //平面の推定
             pcl::SACSegmentationFromNormals<PointType, pcl::Normal> seg;
             seg.setOptimizeCoefficients(true);
@@ -465,8 +462,6 @@ RTC::ReturnCode_t PCToColorPlane::onExecute(RTC::UniqueId ec_id)
 //平面の点群の表示
             setPointCloud(m_viewer, cloud_plane, "cloud_plane", true, 255, 255, 0);
 #endif
-            //点の数が少なければ処理を終了する．
-            if (cloud_plane->points.size() < m_planePointSizeMin) break;
 
 #if 1
             //クラスタリング
@@ -476,11 +471,11 @@ RTC::ReturnCode_t PCToColorPlane::onExecute(RTC::UniqueId ec_id)
             ec.setMinClusterSize(100);
             ec.setMaxClusterSize(25000);
             ec.setSearchMethod(tree);
-            ec.setInputCloud(cloud);
+            ec.setInputCloud(cloud_plane);
             ec.extract(cluster_indices);
 
             pcl::ExtractIndices<PointType> ext;
-            ext.setInputCloud(cloud);
+            ext.setInputCloud(cloud_plane);
             ext.setNegative(false);
             pcl::PointIndices::Ptr index(new pcl::PointIndices);
 
@@ -501,21 +496,14 @@ RTC::ReturnCode_t PCToColorPlane::onExecute(RTC::UniqueId ec_id)
             Eigen::Vector3f center;
             Eigen::Quaternionf rotation;
             float radius;
-            revisePlane(cloud_plane, coefficients_plane, center, rotation, radius);
+            revisePlane(rCloud, coefficients_plane, center, rotation, radius);
 
             //結果
             Plane c(center, radius);
             planes.push_back(c);
-            RTC_INFO(("before i: %d, c: (%6.3f, %6.3f, %6.3f), r: %6.3f",
-                i, center.x(), center.y(), center.z(), radius));
-            selectPlanes(planes, m_plane);
-            for (size_t i = 0; i < m_plane.data.length() / 5; i++) {
-                RTC_INFO(("after  i: %d, c: (%6.3f, %6.3f, %6.3f), r: %6.3f, h: %3.0f",
-                    i, m_plane.data[5 * i + 0], m_plane.data[5 * i + 1], m_plane.data[5 * i + 2],
-                    m_plane.data[5 * i + 3], m_plane.data[5 * i + 4]));
-            }
+            RTC_INFO(("plane: %d, c: (%6.3f, %6.3f, %6.3f), r: %6.3f",
+                 center.x(), center.y(), center.z(), radius));
             m_planeOut.write();
-        }
     }
 
 m_viewer->spinOnce();
